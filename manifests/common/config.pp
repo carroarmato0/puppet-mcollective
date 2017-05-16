@@ -37,10 +37,18 @@ class mcollective::common::config (
     },
   }
 
-  $libdir = $::mcollective::core_libdir ? {
-    undef   => $::mcollective::site_libdir,
-    ''      => $::mcollective::site_libdir,
-    default => "${::mcollective::site_libdir}:${::mcollective::core_libdir}"
+  if $::mcollective::exta_libdir == '' {
+    $libdir = $::mcollective::core_libdir ? {
+      undef   => $::mcollective::site_libdir,
+      ''      => $::mcollective::site_libdir,
+      default => "${::mcollective::site_libdir}:${::mcollective::core_libdir}"
+    }
+  } else {
+    $libdir = $::mcollective::core_libdir ? {
+      undef   => "${::mcollective::site_libdir}:${::mcollective::extra_libdir}",
+      ''      => "${::mcollective::site_libdir}:${::mcollective::extra_libdir}",
+      default => "${::mcollective::site_libdir}:${::mcollective::core_libdir}:${::mcollective::extra_libdir}"
+    }
   }
 
   mcollective::common::setting { 'libdir':
